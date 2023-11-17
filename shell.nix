@@ -2,10 +2,10 @@
 
 let
   pythonEnv = pkgs.python310.withPackages (ps: with ps; [
-    pytest
+    hatch
   ]);
 
 in pkgs.mkShell {
   name = "python";
-  packages = [ pythonEnv ];
+  packages = [ pkgs.hatch ];
 }

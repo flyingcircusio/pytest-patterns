@@ -1,34 +1,37 @@
+`pytest-patterns` is a plugin for pytest that provides a pattern matching 
+engine optimized for testing.
 
-A (yet unnamed) experiment for a pytest plugin to improve pattern matching for
-complex/long outputs from CLIs, HTML and maybe textual documents like JSON,
-YAML, etc.
+Benefits:
 
-Long outputs means strings with 10-1000 lines.
+* provides easy to read reporting for complex patterns in long strings (1000+ lines)
+* assists in reasoning which patterns have matched or not matched – and why
+* can deal with ambiguity, optional and repetitive matches, intermingled
+  output from non-deterministic concurrent processes
+* helps writing patterns that are easy to read, easy to maintain and
+  easy to adjust in the face of unstable outputs
+* helps reusing patterns using pytest fixtures
 
-When writing tests, this should improve:
+Long term goals:
 
-* tolerance for variability (`...` is used as a pattern)
-* tolerance for optional output
-* tolerance for output that may appear out of order
-* mixing/matching of multiple rules
-* writing assumptions in a readable/maintainable way
+Support testing of CLI output, as well as HTML and potentially typical text/*
+types like JSON, YAML, and others.
 
-And **most importantly**: provide failure reports that are very easy
-to read and allow pinpointing the cause of a failure quickly.
+# Examples
 
-# Playground
 
-I'm using a nix flake to toy around with this:
 
+
+Try and play around using the examples in the source repository. The 
+examples fail on purpose, because the failure reporting is the most important
+and useful part – aside from making it easier to write the assertions.
 
 ```shell
 nix develop
-$ pytest -vv test_audit.py
+$ pytest -vv examples
 ```
 
 
 # TODO 
-
 
 * [ ] normalization feature
 
@@ -45,6 +48,15 @@ $ pytest -vv test_audit.py
 		-> strip whitespace at beginning and end
 		-> replace tabs with spaces
 		-> fold multiple spaces into single spaces
+
+* [ ] Get the project fully set up to make sense for interested parties and
+      potential contributors.
+
+* [ ] github actions integration
+
+* [ ] coding style template
+
+* [ ] Actual documentation
 
 # DONE
 
@@ -63,14 +75,11 @@ $ pytest -vv test_audit.py
 
 # Later
 
-
-* [ ] API design for merge alternatives?
-
-* [ ] structlog integration? (via normalization?)
-
 * [ ] add line numbers
 
 * [ ] report line numbers on matched avoidances
+
+* [ ] structlog integration
 
 
 # Wording
