@@ -1,6 +1,6 @@
-from typing import List, Iterable, Tuple
-import re
 import enum
+import re
+from typing import Iterable, List, Tuple
 
 
 class Status(enum.Enum):
@@ -137,7 +137,9 @@ class Audit:
         yield "Here is the string that was tested: "
         yield ""
         for line in self.content:
-            yield format_line_report(line.status.symbol, line.status_cause, line.data)
+            yield format_line_report(
+                line.status.symbol, line.status_cause, line.data
+            )
         if self.unmatched_expectations:
             yield ""
             yield "These are the unmatched expected lines: "

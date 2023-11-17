@@ -2,7 +2,7 @@ import pytest
 
 pytest.register_assert_rewrite("audit")
 
-from audit import PatternsLib  # noqa: need to import after rewrite statement
+from audit import PatternsLib  # noqa: E402
 
 
 def pytest_assertrepr_compare(op, left, right):

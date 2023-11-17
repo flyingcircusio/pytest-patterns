@@ -78,13 +78,13 @@ all = [
 ]
 
 [tool.black]
-target-version = ["py37"]
-line-length = 120
+target-version = ["py38"]
+line-length = 80
 skip-string-normalization = true
 
 [tool.ruff]
-target-version = "py37"
-line-length = 120
+target-version = "py38"
+line-length = 80
 select = [
   "A",
   "ARG",
@@ -113,6 +113,8 @@ select = [
   "YTT",
 ]
 ignore = [
+  # pytest
+  "ARG001", "S101",
   # Allow non-abstract empty methods in abstract base classes
   "B027",
   # Allow boolean positional values in function calls, like `dict.get(... True)`
@@ -155,3 +157,7 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
+
+[tool.isort]
+profile = "black"
+line_length = 80

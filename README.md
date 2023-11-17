@@ -1,4 +1,4 @@
-`pytest-patterns` is a plugin for pytest that provides a pattern matching 
+`pytest-patterns` is a plugin for pytest that provides a pattern matching
 engine optimized for testing.
 
 Benefits:
@@ -21,7 +21,7 @@ types like JSON, YAML, and others.
 
 
 
-Try and play around using the examples in the source repository. The 
+Try and play around using the examples in the source repository. The
 examples fail on purpose, because the failure reporting is the most important
 and useful part – aside from making it easier to write the assertions.
 
@@ -31,7 +31,7 @@ $ pytest -vv examples
 ```
 
 
-# TODO 
+# TODO
 
 * [ ] normalization feature
 
@@ -67,7 +67,7 @@ $ pytest -vv examples
 * [x] allow patterns expectations/tolerations/... to have names and use those to mark up the report why things matched?
 
     * (T) DEBUG     | ....
-    * (X) MIGRATION | 
+    * (X) MIGRATION |
 
 * [x] how to deal with HTML boilerplate -> use `optional("...")`
 
