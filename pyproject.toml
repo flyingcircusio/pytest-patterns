@@ -14,6 +14,7 @@ authors = [
   { name = "Christian Theune", email = "ct@flyingcircus.io" },
 ]
 classifiers = [
+  "Framework :: Pytest",
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.7",
@@ -31,6 +32,9 @@ Documentation = "https://github.com/unknown/pytest-patterns#readme"
 Issues = "https://github.com/unknown/pytest-patterns/issues"
 Source = "https://github.com/unknown/pytest-patterns"
 
+[project.entry-points.pytest11]
+myproject = "pytest_patterns.plugin"
+
 [tool.hatch.version]
 path = "src/pytest_patterns/__about__.py"
 
@@ -38,18 +42,16 @@ path = "src/pytest_patterns/__about__.py"
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "pytest-cov",
 ]
+
+[tool.hatch.envs.default.env-vars]
+COV_CORE_SOURCE="src"
+COV_CORE_CONFIG=".coveragerc"
+COV_CORE_DATAFILE=".coverage.eager"
+
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
-test-cov = "coverage run -m pytest {args:tests}"
-cov-report = [
-  "- coverage combine",
-  "coverage report",
-]
-cov = [
-  "test-cov",
-  "cov-report",
-]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.7", "3.8", "3.9", "3.10", "3.11"]

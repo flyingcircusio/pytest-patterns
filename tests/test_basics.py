@@ -1,25 +1,66 @@
 import pytest
 
+GENERIC_HEADER = [
+    "String did not meet the expectations.",
+    "",
+    "🟢=EXPECTED | ⚪️=OPTIONAL | 🟡=UNEXPECTED | 🔴=REFUSED/UNMATCHED",
+    "",
+    "Here is the string that was tested: ",
+    "",
+]
+
 
 def test_patternslib_multiple_accesses(patterns):
     assert patterns.foo is patterns.foo
 
 
+def test_empty_pattern_empty_string_is_ok(patterns):
+    # This is fine IMHO. The whole general assumption is that we only reject
+    # unexpected content and fail if required content is missing. If there is
+    # no content, then there is no unexpected content and if you didn't expect
+    # any content then there is none missing, so we fall through.
+    audit = patterns.nothing._audit("")
+    assert list(audit.report()) == GENERIC_HEADER
+    assert audit.is_ok()
+
+
 def test_unexpected_lines_fail(patterns):
     audit = patterns.nothing._audit("This is an unexpected line")
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "🟡                 | This is an unexpected line",
     ]
     assert not audit.is_ok()
+
+
+def test_empty_lines_do_not_match(patterns):
+    patterns.nothing.optional("")
+    audit = patterns.nothing._audit(
+        """
+"""
+    )
+    assert list(audit.report()) == [
+        *GENERIC_HEADER,
+        "🟡                 | ",
+    ]
+    assert not audit.is_ok()
+
+
+def test_empty_lines_match_special_marker(patterns):
+    patterns.empty.optional("<empty-line>")
+    audit = patterns.empty._audit(
+        """
+
+<empty-line>
+"""
+    )
+    assert list(audit.report()) == [
+        *GENERIC_HEADER,
+        "⚪️ empty           | ",
+        "⚪️ empty           | ",
+        "⚪️ empty           | <empty-line>",
+    ]
+    assert audit.is_ok()
 
 
 def test_comprehensive(patterns):
@@ -82,15 +123,7 @@ This is a second expected line"""
     )
 
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "🟢 in_order        | This is a first expected line",
         "⚪️ in_order        | This is from another match",
         "🟢 in_order        | This is a second expected line",
@@ -113,15 +146,7 @@ This is an expected line
 """
     )
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "🟢 in_order        | This is an expected line",
         "",
         "These are the unmatched expected lines: ",
@@ -137,15 +162,7 @@ def test_refused_lines_fail(patterns):
 
     audit = pattern._audit("This is a refused line")
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "🔴 refused         | This is a refused line",
         "",
         "These are the matched refused lines: ",
@@ -155,7 +172,7 @@ def test_refused_lines_fail(patterns):
     assert not audit.is_ok()
 
 
-def test_focused_lines_only_clear_if_not_interrupted(patterns):
+def test_continuous_lines_only_clear_if_not_interrupted(patterns):
     pattern = patterns.focus
     pattern.optional("asdf")
     pattern.continuous(
@@ -178,15 +195,7 @@ asdf
 """
     )
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "⚪️ focus           | asdf",
         "🟢 focus           | These lines",
         "🟢 focus           | need to match",
@@ -210,15 +219,7 @@ asdf
 """
     )
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "⚪️ focus           | asdf",
         "🟢 focus           | These lines",
         "🔴 focus           | are broken",
@@ -254,15 +255,7 @@ There is no first line
 """
     )
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "🟡                 | Not the first line",
         "🟡                 | There is no first line",
         "",
@@ -285,15 +278,7 @@ ping
 """
     )
     assert list(audit.report()) == [
-        "String did not meet the expectations.",
-        "",
-        "🟢=EXPECTED",
-        "⚪️=OPTIONAL",
-        "🟡=UNEXPECTED",
-        "🔴=REFUSED/UNMATCHED",
-        "",
-        "Here is the string that was tested: ",
-        "",
+        *GENERIC_HEADER,
         "⚪️ optional        | ping",
     ]
     assert audit.is_ok()
