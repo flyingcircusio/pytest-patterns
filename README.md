@@ -343,11 +343,9 @@ There should be one-- and preferably only one --obvious way to do it.
 Although that way may not be obvious at first unless you're Dutch.
 """
     )
-    full_pattern = patterns.full
-    full_pattern.merge("top_and_middle", "better_things", "conclusio")
 
 
-def test_zen_6(patterns, zen_patterns):
+def test_zen(patterns, zen_patterns):
     full_pattern = patterns.full
     full_pattern.merge("better_things", "conclusio", "top_and_middle")
 
