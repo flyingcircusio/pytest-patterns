@@ -43,7 +43,7 @@ STATUS_SYMBOLS = {
 EMPTY_LINE_PATTERN = "<empty-line>"
 
 
-def match(pattern: str, line: str) -> Optional[ Union[bool, re.Match[str]]]:
+def match(pattern: str, line: str) -> Optional[ Union[bool, "re.Match[str]"]]:
     if pattern == EMPTY_LINE_PATTERN:
         if not line:
             return True
