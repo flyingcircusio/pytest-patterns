@@ -163,3 +163,7 @@ exclude_lines = [
 [tool.isort]
 profile = "black"
 line_length = 80
+
+[tool.mypy]
+strict=true
+python_version = "3.8"

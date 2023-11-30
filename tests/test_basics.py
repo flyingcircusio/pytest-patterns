@@ -1,4 +1,5 @@
 import pytest
+from pytest_patterns.plugin import PatternsLib
 
 GENERIC_HEADER = [
     "String did not meet the expectations.",
@@ -10,11 +11,11 @@ GENERIC_HEADER = [
 ]
 
 
-def test_patternslib_multiple_accesses(patterns):
+def test_patternslib_multiple_accesses(patterns: PatternsLib) -> None:
     assert patterns.foo is patterns.foo
 
 
-def test_empty_pattern_empty_string_is_ok(patterns):
+def test_empty_pattern_empty_string_is_ok(patterns:PatternsLib) -> None:
     # This is fine IMHO. The whole general assumption is that we only reject
     # unexpected content and fail if required content is missing. If there is
     # no content, then there is no unexpected content and if you didn't expect
@@ -24,7 +25,7 @@ def test_empty_pattern_empty_string_is_ok(patterns):
     assert audit.is_ok()
 
 
-def test_unexpected_lines_fail(patterns):
+def test_unexpected_lines_fail(patterns:PatternsLib) -> None:
     audit = patterns.nothing._audit("This is an unexpected line")
     assert list(audit.report()) == [
         *GENERIC_HEADER,
@@ -33,7 +34,7 @@ def test_unexpected_lines_fail(patterns):
     assert not audit.is_ok()
 
 
-def test_empty_lines_do_not_match(patterns):
+def test_empty_lines_do_not_match(patterns :PatternsLib) -> None:
     patterns.nothing.optional("")
     audit = patterns.nothing._audit(
         """
@@ -46,7 +47,7 @@ def test_empty_lines_do_not_match(patterns):
     assert not audit.is_ok()
 
 
-def test_empty_lines_match_special_marker(patterns):
+def test_empty_lines_match_special_marker(patterns: PatternsLib) -> None:
     patterns.empty.optional("<empty-line>")
     audit = patterns.empty._audit(
         """
@@ -63,7 +64,7 @@ def test_empty_lines_match_special_marker(patterns):
     assert audit.is_ok()
 
 
-def test_comprehensive(patterns):
+def test_comprehensive(patterns: PatternsLib) -> None:
     sample = patterns.sample
 
     sample.in_order(
@@ -106,7 +107,7 @@ This comes even later
     )
 
 
-def test_in_order_lines_clear_with_intermittent_input(patterns):
+def test_in_order_lines_clear_with_intermittent_input(patterns: PatternsLib) -> None:
     pattern = patterns.in_order
     pattern.in_order(
         """
@@ -131,7 +132,7 @@ This is a second expected line"""
     assert audit.is_ok()
 
 
-def test_missing_ordered_lines_fail(patterns):
+def test_missing_ordered_lines_fail(patterns: PatternsLib) -> None:
     pattern = patterns.in_order
     pattern.in_order(
         """
@@ -156,7 +157,7 @@ This is an expected line
     assert not audit.is_ok()
 
 
-def test_refused_lines_fail(patterns):
+def test_refused_lines_fail(patterns: PatternsLib) -> None:
     pattern = patterns.refused
     pattern.refused("This is a refused line")
 
@@ -172,7 +173,7 @@ def test_refused_lines_fail(patterns):
     assert not audit.is_ok()
 
 
-def test_continuous_lines_only_clear_if_not_interrupted(patterns):
+def test_continuous_lines_only_clear_if_not_interrupted(patterns: PatternsLib) -> None:
     pattern = patterns.focus
     pattern.optional("asdf")
     pattern.continuous(
@@ -239,7 +240,7 @@ asdf
     assert not audit.is_ok()
 
 
-def test_continuous_lines_fail_and_report_if_first_line_isnt_matching(patterns):
+def test_continuous_lines_fail_and_report_if_first_line_isnt_matching(patterns: PatternsLib) -> None:
     pattern = patterns.focus
     pattern.continuous(
         """
@@ -267,7 +268,7 @@ There is no first line
     assert not audit.is_ok()
 
 
-def test_optional(patterns):
+def test_optional(patterns: PatternsLib) -> None:
     pattern = patterns.optional
     pattern.optional("pong")
     pattern.optional("ping")
@@ -285,7 +286,7 @@ ping
 
 
 @pytest.fixture()
-def fcqemu_patterns(patterns):
+def fcqemu_patterns(patterns: PatternsLib) -> None:
     patterns.debug.optional("simplevm> ...")
 
     # This part of the heartbeats must show up
@@ -308,7 +309,7 @@ simplevm             stopped-heartbeat-ping
     patterns.failure.refused("...fail...")
 
 
-def test_complex_example(patterns, fcqemu_patterns):
+def test_complex_example(patterns: PatternsLib, fcqemu_patterns: None) -> None:
     outmigration = patterns.outmigration
     outmigration.merge("debug", "heartbeat", "failure")
 
@@ -674,7 +675,7 @@ simplevm             release-lock                   result='unlocked' target='/r
     )
 
 
-def test_html(patterns):
+def test_html(patterns: PatternsLib) -> None:
     patterns.owrap.in_order(
         """
 <!DOCTYPE html>
