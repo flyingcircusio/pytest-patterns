@@ -1,37 +1,44 @@
 [build-system]
-requires = ["hatchling"]
 build-backend = "hatchling.build"
+requires = [
+  "hatchling",
+]
 
 [project]
 name = "pytest-patterns"
-dynamic = ["version"]
-description = 'pytest plugin to make testing complicated long string output easy to write and easy to debug'
+description = "pytest plugin to make testing complicated long string output easy to write and easy to debug"
 readme = "README.md"
-requires-python = ">=3.7"
+keywords = [
+]
 license = "MIT"
-keywords = []
 authors = [
   { name = "Christian Theune", email = "ct@flyingcircus.io" },
 ]
+requires-python = ">=3.7"
 classifiers = [
-  "Framework :: Pytest",
   "Development Status :: 4 - Beta",
+  "Framework :: Pytest",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["pytest>=7",]
-
+dynamic = [
+  "version",
+]
+dependencies = [
+  "pytest>=7",
+]
 [project.urls]
 Documentation = "https://github.com/unknown/pytest-patterns#readme"
 Issues = "https://github.com/unknown/pytest-patterns/issues"
 Source = "https://github.com/unknown/pytest-patterns"
-
 [project.entry-points.pytest11]
 myproject = "pytest_patterns.plugin"
 
@@ -141,6 +148,10 @@ ban-relative-imports = "all"
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
+[tool.isort]
+profile = "black"
+line_length = 80
+
 [tool.coverage.run]
 source_pkgs = ["pytest_patterns", "tests"]
 branch = true
@@ -159,10 +170,6 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
-
-[tool.isort]
-profile = "black"
-line_length = 80
 
 [tool.mypy]
 strict=true

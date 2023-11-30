@@ -1,16 +1,20 @@
+from __future__ import annotations
+
 import enum
 import re
-from typing import List, Set, Tuple, Any, Iterator, Optional, Union
+from typing import Any, Iterator
 
 import pytest
 
 
 @pytest.fixture
-def patterns() -> "PatternsLib":
+def patterns() -> PatternsLib:
     return PatternsLib()
 
 
-def pytest_assertrepr_compare(op: str, left: Any, right: Any) -> Optional[List[str]]:
+def pytest_assertrepr_compare(
+    op: str, left: Any, right: Any
+) -> list[str] | None:
     if op != "==":
         return None
     if isinstance(left, Pattern):
@@ -19,7 +23,6 @@ def pytest_assertrepr_compare(op: str, left: Any, right: Any) -> Optional[List[s
         return list(right._audit(left).report())
     else:
         return None
-
 
 
 class Status(enum.Enum):
@@ -43,7 +46,7 @@ STATUS_SYMBOLS = {
 EMPTY_LINE_PATTERN = "<empty-line>"
 
 
-def match(pattern: str, line: str) -> Optional[ Union[bool, "re.Match[str]"]]:
+def match(pattern: str, line: str) -> bool | re.Match[str] | None:
     if pattern == EMPTY_LINE_PATTERN:
         if not line:
             return True
@@ -74,9 +77,9 @@ class Line:
 
 
 class Audit:
-    content: List[Line]
-    unmatched_expectations: List[Tuple[str, str]]
-    matched_refused: Set[Tuple[str, str]]
+    content: list[Line]
+    unmatched_expectations: list[tuple[str, str]]
+    matched_refused: set[tuple[str, str]]
 
     def __init__(self, content: str):
         self.unmatched_expectations = []
@@ -89,7 +92,7 @@ class Audit:
     def cursor(self) -> Iterator[Line]:
         return iter(self.content)
 
-    def in_order(self, name: str, expected_lines: List[str]) -> None:
+    def in_order(self, name: str, expected_lines: list[str]) -> None:
         """Expect all lines exist and come in order, but they
         may be interleaved with other lines."""
         cursor = self.cursor()
@@ -103,7 +106,7 @@ class Audit:
                 # Reset the scan, maybe the other lines will match
                 cursor = self.cursor()
 
-    def optional(self, name: str, tolerated_lines: List[str]) -> None:
+    def optional(self, name: str, tolerated_lines: list[str]) -> None:
         """Those lines may exist and then they may appear anywhere
         a number of times, or they may not exist.
         """
@@ -112,14 +115,14 @@ class Audit:
                 if line.matches(tolerated_line):
                     line.mark(Status.OPTIONAL, name)
 
-    def refused(self, name: str, refused_lines: List[str]) -> None:
+    def refused(self, name: str, refused_lines: list[str]) -> None:
         for refused_line in refused_lines:
             for line in self.cursor():
                 if line.matches(refused_line):
                     line.mark(Status.REFUSED, name)
                     self.matched_refused.add((name, refused_line))
 
-    def continuous(self, name: str, continuous_lines: List[str]) -> None:
+    def continuous(self, name: str, continuous_lines: list[str]) -> None:
         continuous_cursor = enumerate(continuous_lines)
         continuous_index, continuous_line = next(continuous_cursor)
         for line in self.cursor():
@@ -195,18 +198,18 @@ def format_line_report(symbol: str, cause: str, line: str) -> str:
     return symbol + " " + cause.ljust(15)[:15] + " | " + line
 
 
-def pattern_lines(lines: str) -> List[str]:
+def pattern_lines(lines: str) -> list[str]:
     # Remove leading whitespace, ignore empty lines.
     return list(filter(None, lines.splitlines()))
 
 
 class Pattern:
     name: str
-    library: "PatternsLib"
-    ops: List[Tuple[str, str, Any]]
-    inherited: Set[str]
+    library: PatternsLib
+    ops: list[tuple[str, str, Any]]
+    inherited: set[str]
 
-    def __init__(self, library: "PatternsLib", name: str):
+    def __init__(self, library: PatternsLib, name: str):
         self.name = name
         self.library = library
         self.ops = []
@@ -241,7 +244,7 @@ class Pattern:
 
     # Internal API
 
-    def flat_ops(self) -> Iterator[Tuple[str, str, Any]]:
+    def flat_ops(self) -> Iterator[tuple[str, str, Any]]:
         for inherited_pattern in self.inherited:
             yield from getattr(self.library, inherited_pattern).flat_ops()
         yield from self.ops

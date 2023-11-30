@@ -1,4 +1,5 @@
 import pytest
+
 from pytest_patterns.plugin import PatternsLib
 
 GENERIC_HEADER = [
@@ -15,7 +16,7 @@ def test_patternslib_multiple_accesses(patterns: PatternsLib) -> None:
     assert patterns.foo is patterns.foo
 
 
-def test_empty_pattern_empty_string_is_ok(patterns:PatternsLib) -> None:
+def test_empty_pattern_empty_string_is_ok(patterns: PatternsLib) -> None:
     # This is fine IMHO. The whole general assumption is that we only reject
     # unexpected content and fail if required content is missing. If there is
     # no content, then there is no unexpected content and if you didn't expect
@@ -25,7 +26,7 @@ def test_empty_pattern_empty_string_is_ok(patterns:PatternsLib) -> None:
     assert audit.is_ok()
 
 
-def test_unexpected_lines_fail(patterns:PatternsLib) -> None:
+def test_unexpected_lines_fail(patterns: PatternsLib) -> None:
     audit = patterns.nothing._audit("This is an unexpected line")
     assert list(audit.report()) == [
         *GENERIC_HEADER,
@@ -34,7 +35,7 @@ def test_unexpected_lines_fail(patterns:PatternsLib) -> None:
     assert not audit.is_ok()
 
 
-def test_empty_lines_do_not_match(patterns :PatternsLib) -> None:
+def test_empty_lines_do_not_match(patterns: PatternsLib) -> None:
     patterns.nothing.optional("")
     audit = patterns.nothing._audit(
         """
@@ -107,7 +108,9 @@ This comes even later
     )
 
 
-def test_in_order_lines_clear_with_intermittent_input(patterns: PatternsLib) -> None:
+def test_in_order_lines_clear_with_intermittent_input(
+    patterns: PatternsLib,
+) -> None:
     pattern = patterns.in_order
     pattern.in_order(
         """
@@ -173,7 +176,9 @@ def test_refused_lines_fail(patterns: PatternsLib) -> None:
     assert not audit.is_ok()
 
 
-def test_continuous_lines_only_clear_if_not_interrupted(patterns: PatternsLib) -> None:
+def test_continuous_lines_only_clear_if_not_interrupted(
+    patterns: PatternsLib,
+) -> None:
     pattern = patterns.focus
     pattern.optional("asdf")
     pattern.continuous(
@@ -240,7 +245,9 @@ asdf
     assert not audit.is_ok()
 
 
-def test_continuous_lines_fail_and_report_if_first_line_isnt_matching(patterns: PatternsLib) -> None:
+def test_continuous_lines_fail_and_report_if_first_line_isnt_matching(
+    patterns: PatternsLib,
+) -> None:
     pattern = patterns.focus
     pattern.continuous(
         """
