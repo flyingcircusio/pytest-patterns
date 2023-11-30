@@ -1,6 +1,6 @@
 import enum
 import re
-from typing import Iterable, List, Set, Tuple
+from typing import List, Set, Tuple
 
 import pytest
 
@@ -207,7 +207,7 @@ class Pattern:
     # Modifiers (Verbs)
 
     def merge(self, *base_patterns):
-        """Merge the rules from those patterns (recursively) into this pattern."""
+        """Merge rules from base_patterns (recursively) into this pattern."""
         self.inherited.update(base_patterns)
 
     def normalize(self, mode: str):

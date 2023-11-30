@@ -370,7 +370,7 @@ simplevm             consul-deregister
 simplevm             outmigrate-finished            exitcode=0
 simplevm             release-lock                   count=0 target='/run/qemu.simplevm.lock'
 simplevm             release-lock                   result='unlocked' target='/run/qemu.simplevm.lock'
-"""
+"""  # noqa: E501
     )
     # The migration process may take a couple of rounds to complete,
     # so this might appear more often:
@@ -378,7 +378,7 @@ simplevm             release-lock                   result='unlocked' target='/r
         """
 simplevm             query-migrate                  arguments={} id=None subsystem='qemu/qmp'
 simplevm             migration-status               mbps=... remaining='...' status='active'
-"""
+"""  # noqa: E501
     )
 
     assert (
@@ -670,7 +670,7 @@ simplevm             consul-deregister
 simplevm             outmigrate-finished            exitcode=0
 simplevm             release-lock                   count=0 target='/run/qemu.simplevm.lock'
 simplevm             release-lock                   result='unlocked' target='/run/qemu.simplevm.lock'
-"""
+"""  # noqa: E501
     )
 
 
@@ -849,7 +849,7 @@ def test_html(patterns):
   </div>
       </body>
 </html>
-"""
+"""  # noqa: E501
     )
 
 
