@@ -30,12 +30,7 @@ repos:
   - id: black
   repo: https://github.com/psf/black
   rev: 23.3.0
-- hooks:
-  - args:
-    - --ignore
-    - E501
-    - --ignore
-    - F401
-    id: ruff
-  repo: https://github.com/astral-sh/ruff-pre-commit
+- repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.0.289
+  hooks:
+  - id: ruff
