@@ -83,7 +83,7 @@ match) and are fine the way they are. Optional matches are displayed with a
 white circle (⚪️). The report also highlights those lines that weren't matched
 and marked with a yellow circle (🟡).
 
-We now the Zen is correct the way it is, so lets use more of the API to continue
+We know the Zen is correct the way it is, so lets use more of the API to continue
 completing the pattern.
 
 ## `continous` matches
@@ -213,7 +213,7 @@ special way to handle newlines both in patterns and in content.
    to make your patterns more readable by grouping lines visually.
 
 We get out of this by using the special marker `<empty-line>` in our patterns
-which will match both literally for lines containing `<empty-line>`` and which
+which will match both literally for lines containing `<empty-line>` and which
 are empty lines:
 
 ```python
@@ -404,8 +404,8 @@ $ hatch run test
 
 * [x] allow patterns expectations/tolerations/... to have names and use those to mark up the report why things matched?
 
-    * (T) DEBUG     | ....
-    * (X) MIGRATION |
+    * [T] DEBUG     | ....
+    * [X] MIGRATION |
 
 * [x] how to deal with HTML boilerplate -> use `optional("...")`
 
