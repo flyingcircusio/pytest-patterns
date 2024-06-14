@@ -381,22 +381,42 @@ $ hatch run test
         -> replace tabs with spaces
         -> fold multiple spaces into single spaces
 
-
+* [ ] proper release process with tagging, version updates, etc.
 
 * [ ] Get coverage working correctly (https://pytest-cov.readthedocs.io/en/latest/plugins.html doesnt seem to help ...)
 
 * [ ] Get the project fully set up to make sense for interested parties and
       potential contributors.
 
-* [ ] github actions integration
-
-* [ ] coding style template
-
-* [ ] Actual documentation
+* [ ] optional reporting without colors
 
 * [ ] matrix builds for multiple python versions / use tox locally and in github action?
 
+* [ ] highlight whitespace (e.g. <TAB> <SPACE> ) when reporting unmatched expected lines. this can be confusing if you see an "empty" line because you typoed e.g.:
+
+```
+    outmigrate.optional(
+        """
+simplevm             waiting                        interval=3 remaining=...
+simplevm             check-staging-config           result='none'
+simplevm             query-migrate                  arguments={} id=None subsystem='qemu/qmp'
+simplevm             migration-status               mbps=... remaining='...' status='active'
+simplevm             vm-destroy-kill-vm             attempt=... subsystem='qemu'
+    """
+    )
+```
+
+Do you see it? There are four spaces on the last line which is now an expected line with four spaces ...
+
+This could also be improved by ignoring whitespace only lines (optionally?)
+
+
 # DONE
+
+
+* [x] coding style template
+
+* [x] Actual documentation
 
 * [x] differentiate between tolerated and expected in status reporting
 
@@ -413,12 +433,17 @@ $ hatch run test
 
 # Later
 
+* [ ] html normalization might want to include a feature to suppress reporting
+   of certain lines (and just add `...` in the reporting output, e.g. if something
+   fails do not report the owrap lines
+
 * [ ] add line numbers
 
 * [ ] report line numbers on matched avoidances
 
 * [ ] structlog integration
 
+* [ ] more comprehensive docs
 
 # Wording
 
