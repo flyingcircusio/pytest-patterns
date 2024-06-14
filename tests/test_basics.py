@@ -160,6 +160,44 @@ This is an expected line
     assert not audit.is_ok()
 
 
+def test_incorrectly_ordered_lines_fail(patterns):
+    pattern = patterns.in_order
+    pattern.in_order(
+        """
+Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+"""
+    )
+
+    audit = pattern._audit(
+        """\
+Line 5
+Line 4
+Line 3
+Line 2
+Line 1
+"""
+    )
+    assert list(audit.report()) == [
+        *GENERIC_HEADER,
+        "🟡                 | Line 5",
+        "🟡                 | Line 4",
+        "🟡                 | Line 3",
+        "🟡                 | Line 2",
+        "🟢 in_order        | Line 1",
+        "",
+        "These are the unmatched expected lines: ",
+        "",
+        "🔴 in_order        | Line 2",
+        "🔴 in_order        | Line 3",
+        "🔴 in_order        | Line 4",
+        "🔴 in_order        | Line 5",
+    ]
+    assert not audit.is_ok()
+
 def test_refused_lines_fail(patterns: PatternsLib) -> None:
     pattern = patterns.refused
     pattern.refused("This is a refused line")

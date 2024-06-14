@@ -96,15 +96,21 @@ class Audit:
         """Expect all lines exist and come in order, but they
         may be interleaved with other lines."""
         cursor = self.cursor()
+        have_some_match = False
         for expected_line in expected_lines:
             for line in cursor:
                 if line.matches(expected_line):
                     line.mark(Status.EXPECTED, name)
+                    have_some_match = True
                     break
             else:
                 self.unmatched_expectations.append((name, expected_line))
-                # Reset the scan, maybe the other lines will match
-                cursor = self.cursor()
+                if not have_some_match:
+                    # Reset the scan, if we didn't have any previous
+                    # match - maybe a later line will produce a partial match.
+                    # But do not reset if we already have something matching,
+                    # because that would defeat the "in order" assumption.
+                    cursor = self.cursor()
 
     def optional(self, name: str, tolerated_lines: list[str]) -> None:
         """Those lines may exist and then they may appear anywhere
