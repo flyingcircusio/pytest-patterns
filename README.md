@@ -352,6 +352,27 @@ def test_zen(patterns, zen_patterns):
     assert full_pattern == zen
 ```
 
+## Handling tabs and whitespace
+
+When copying and pasting output from commands its easy to turn tabs from an
+original source into spaces and then accidentally not aligning things right.
+
+As its more typical to not insert tabs in your code pytest-patterns converts
+tabs to spaces (properly aligned to 8 character stops as terminals render them):
+
+```python
+def test_tabs_and_spaces(patterns):
+    data = """
+pre>\taligned text
+prefix>\tmore aligned text
+"""
+    tabs = patterns.tabs
+    tabs.in_order("""
+pre>    aligned text
+prefix> aligned text
+""")
+    assert tabs == data
+```
 
 # Development
 
@@ -378,8 +399,7 @@ $ hatch run test
 
     -> whitespace (pattern and tested content)
         -> strip whitespace at beginning and end
-        -> replace tabs with spaces
-        -> fold multiple spaces into single spaces
+        -> fold multiple spaces into single spaces (makes it harder to diagnose things)
 
 * [ ] proper release process with tagging, version updates, etc.
 

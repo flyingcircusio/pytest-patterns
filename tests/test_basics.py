@@ -11,6 +11,20 @@ GENERIC_HEADER = [
     "",
 ]
 
+def test_tab_replace() -> None:
+    from pytest_patterns.plugin import tab_replace
+
+    assert tab_replace("\t") == " " * 8
+    assert tab_replace("1\t9") == "1       9"
+    assert tab_replace("12\t9") == "12      9"
+    assert tab_replace("123\t9") == "123     9"
+    assert tab_replace("1234\t9") == "1234    9"
+    assert tab_replace("12345\t9") == "12345   9"
+    assert tab_replace("123456\t9") == "123456  9"
+    assert tab_replace("1234567\t9") == "1234567 9"
+    assert tab_replace("12345678\t9") == "12345678        9"
+    assert tab_replace("123456789\t0") == "123456789       0"
+
 
 def test_patternslib_multiple_accesses(patterns: PatternsLib) -> None:
     assert patterns.foo is patterns.foo

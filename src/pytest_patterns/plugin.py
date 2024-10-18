@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import enum
 import re
-from typing import Any, Iterator
+from typing import Any, Iterator, List, Set, Tuple
 
 import pytest
 
@@ -45,13 +45,19 @@ STATUS_SYMBOLS = {
 
 EMPTY_LINE_PATTERN = "<empty-line>"
 
+def tab_replace(line: str) -> str:
+    while (position := line.find("\t")) != -1:
+        fill = " " * (8 - (position % 8))
+        line = line.replace("\t", fill)
+    return line
+
 
 def match(pattern: str, line: str) -> bool | re.Match[str] | None:
     if pattern == EMPTY_LINE_PATTERN:
         if not line:
             return True
-    pattern = pattern.replace("\t", " " * 8)
-    line = line.replace("\t", " " * 8)
+
+    line = tab_replace(line)
     pattern = re.escape(pattern)
     pattern = pattern.replace(r"\.\.\.", ".*?")
     re_pattern = re.compile("^" + pattern + "$")
