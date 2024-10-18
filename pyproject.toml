@@ -33,7 +33,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "pytest>=7",
+  "pytest>=6",
 ]
 [project.urls]
 Documentation = "https://github.com/unknown/pytest-patterns#readme"
@@ -65,7 +65,7 @@ python = ["3.7", "3.8", "3.9", "3.10", "3.11"]
 [tool.hatch.envs.lint]
 detached = true
 dependencies = [
-  "pytest>=7",
+  "pytest>=6",
   "black>=23.1.0",
   "mypy>=1.0.0",
   "ruff>=0.0.243",
