@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import enum
 import re
-from typing import Any, Iterator, List, Set, Tuple
+from typing import Any, Iterator
 
 import pytest
 
@@ -45,11 +45,58 @@ STATUS_SYMBOLS = {
 
 EMPTY_LINE_PATTERN = "<empty-line>"
 
+
 def tab_replace(line: str) -> str:
     while (position := line.find("\t")) != -1:
         fill = " " * (8 - (position % 8))
         line = line.replace("\t", fill)
     return line
+
+
+ascii_to_control_pictures = {
+    0x00: "\u2400",  # NUL -> ␀
+    0x01: "\u2401",  # SOH -> ␁
+    0x02: "\u2402",  # STX -> ␂
+    0x03: "\u2403",  # ETX -> ␃
+    0x04: "\u2404",  # EOT -> ␄
+    0x05: "\u2405",  # ENQ -> ␅
+    0x06: "\u2406",  # ACK -> ␆
+    0x07: "\u2407",  # BEL -> ␇
+    0x08: "\u2408",  # BS  -> ␈
+    0x09: "\u2409",  # HT  -> ␉
+    0x0A: "\u240a",  # LF  -> ␊
+    0x0B: "\u240b",  # VT  -> ␋
+    0x0C: "\u240c",  # FF  -> ␌
+    0x0D: "\u240d",  # CR  -> ␍
+    0x0E: "\u240e",  # SO  -> ␎
+    0x0F: "\u240f",  # SI  -> ␏
+    0x10: "\u2410",  # DLE -> ␐
+    0x11: "\u2411",  # DC1 -> ␑
+    0x12: "\u2412",  # DC2 -> ␒
+    0x13: "\u2413",  # DC3 -> ␓
+    0x14: "\u2414",  # DC4 -> ␔
+    0x15: "\u2415",  # NAK -> ␕
+    0x16: "\u2416",  # SYN -> ␖
+    0x17: "\u2417",  # ETB -> ␗
+    0x18: "\u2418",  # CAN -> ␘
+    0x19: "\u2419",  # EM  -> ␙
+    0x1A: "\u241a",  # SUB -> ␚
+    0x1B: "\u241b",  # ESC -> ␛
+    0x1C: "\u241c",  # FS  -> ␜
+    0x1D: "\u241d",  # GS  -> ␝
+    0x1E: "\u241e",  # RS  -> ␞
+    0x1F: "\u241f",  # US  -> ␟
+    0x20: "\u2420",  # SPACE -> ␠
+    0x7F: "\u2421",  # DEL -> ␡
+}
+
+
+def to_control_picture(char: str) -> str:
+    return ascii_to_control_pictures.get(ord(char), char)
+
+
+def line_to_control_pictures(line: str) -> str:
+    return "".join(to_control_picture(char) for char in line)
 
 
 def match(pattern: str, line: str) -> bool | re.Match[str] | None:
@@ -182,20 +229,24 @@ class Audit:
         yield ""
         for line in self.content:
             yield format_line_report(
-                line.status.symbol, line.status_cause, line.data
+                line.status, line.status.symbol, line.status_cause, line.data
             )
         if self.unmatched_expectations:
             yield ""
             yield "These are the unmatched expected lines: "
             yield ""
             for name, line_str in self.unmatched_expectations:
-                yield format_line_report(Status.REFUSED.symbol, name, line_str)
+                yield format_line_report(
+                    Status.REFUSED, Status.REFUSED.symbol, name, line_str
+                )
         if self.matched_refused:
             yield ""
             yield "These are the matched refused lines: "
             yield ""
             for name, line_str in self.matched_refused:
-                yield format_line_report(Status.REFUSED.symbol, name, line_str)
+                yield format_line_report(
+                    Status.REFUSED, Status.REFUSED.symbol, name, line_str
+                )
 
     def is_ok(self) -> bool:
         if self.unmatched_expectations:
@@ -206,7 +257,14 @@ class Audit:
         return True
 
 
-def format_line_report(symbol: str, cause: str, line: str) -> str:
+def format_line_report(
+    status: Status,
+    symbol: str,
+    cause: str,
+    line: str,
+) -> str:
+    if status not in [Status.EXPECTED, Status.OPTIONAL]:
+        line = line_to_control_pictures(line)
     return symbol + " " + cause.ljust(15)[:15] + " | " + line
 
 
